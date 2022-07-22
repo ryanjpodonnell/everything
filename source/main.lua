@@ -1,40 +1,60 @@
 local gfx = playdate.graphics
 
-local dx = 0.05
-local dz = 0.01
-local speed = 0.1
-local x = 0
-local z = 0
-
-local point = { math.random(), math.random() } 
-
 playdate.display.setRefreshRate(0)
+playdate.display.setScale(8)
 
 gfx.setColor(gfx.kColorWhite)
-gfx.fillRect(0, 0, 400, 240)
+gfx.fillRect(0, 0, 50, 30)
 gfx.setColor(gfx.kColorBlack)
 
+local data = 0
+
 function playdate.update()
-  local x,y = point[1], point[2]
+  local bitString = toBits(data)
 
-  local dx = gfx.perlin(x,y,x+y+z, 0, 5, 0.8) - 0.5
-  local dy = gfx.perlin(x,y,x+y+z+1, 0, 5, 0.8) - 0.5
-
-  x += dx * speed
-  y += dy * speed
-
-  if x < 0 then x += 1 elseif x >= 1 then x -= 1 end
-  if y < 0 then y += 1 elseif y >= 1 then y -= 1 end
-
-  gfx.drawPixel(400*x, 240*y)
-
-  point = {x,y}
-	
-	z += dz
+  for i=1,#bitString do
+    if bitString[i] == 1
+    then
+      gfx.setColor(gfx.kColorBlack)
+      gfx.drawPixel(i-1, 0)
+    else
+      gfx.setColor(gfx.kColorWhite)
+      gfx.drawPixel(i-1, 0)
+    end
+  end
 end
 
 function playdate.AButtonDown()
-	gfx.setColor(gfx.kColorWhite)
-	gfx.fillRect(0, 0, 400, 240)
-	gfx.setColor(gfx.kColorBlack)
+  data = 0
+  gfx.setColor(gfx.kColorWhite)
+  gfx.fillRect(0, 0, 50, 30)
+  gfx.setColor(gfx.kColorBlack)
+end
+
+function playdate.BButtonDown()
+  data = data + 1
+  if data > 65535
+  then
+    data = 0
+  end
+end
+
+function playdate.cranked(change, acceleratedChange)
+  data = data + math.floor(math.abs(acceleratedChange))
+  if data > 65535
+  then
+    data = 0
+  end
+end
+
+function toBits(num)
+  -- returns a table of bits, least significant first.
+  local t={} -- will contain the bits
+  while num>0 do
+    rest=math.fmod(num,2)
+    size = #t
+    t[size+1]=rest
+    num=math.floor((num-rest)/2)
+  end
+  return t
 end
