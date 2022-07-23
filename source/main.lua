@@ -116,6 +116,13 @@ function playdate.rightButtonDown()
   increaseData(65535)
 end
 
+function playdate.upButtonDown()
+  for i = 1, #data do
+    data[i] = math.random(0, 65535)
+    changes[i] = true
+  end
+end
+
 function playdate.update()
   for i = 1, #data do
     if changes[i] == true
