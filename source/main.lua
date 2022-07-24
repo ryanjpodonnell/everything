@@ -86,21 +86,25 @@ function increaseData(num)
   end
 end
 
+function modifyData(num)
+  if num > 0
+  then
+    increaseData(num)
+  else
+    decreaseData(num)
+  end
+end
+
 function playdate.AButtonDown()
-  increaseData(1)
+  modifyData(1)
 end
 
 function playdate.BButtonDown()
-  decreaseData(-1)
+  modifyData(-1)
 end
 
 function playdate.cranked(change, acceleratedChange)
-  if acceleratedChange > 0
-  then
-    increaseData(math.floor(acceleratedChange))
-  else
-    decreaseData(math.floor(acceleratedChange))
-  end
+  modifyData(math.floor(acceleratedChange))
 end
 
 function playdate.downButtonDown()
@@ -111,11 +115,11 @@ function playdate.downButtonDown()
 end
 
 function playdate.leftButtonDown()
-  decreaseData(-65535)
+  modifyData(-65535)
 end
 
 function playdate.rightButtonDown()
-  increaseData(65535)
+  modifyData(65535)
 end
 
 function playdate.upButtonDown()
@@ -128,7 +132,7 @@ end
 function playdate.update()
   if playdate.isCrankDocked()
   then
-    increaseData(1)
+    modifyData(1)
   end
 
   for i = 1, #data do
