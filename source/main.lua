@@ -26,7 +26,9 @@ function clearScreen()
   gfx.fillRect(0, 0, 50, 24)
   gfx.setColor(gfx.kColorBlack)
 
-  playdate.graphics.drawLine(0, 25, 50, 25)
+  playdate.graphics.drawLine(0, 24, 50, 24)
+  playdate.graphics.setFont(font)
+  playdate.graphics.drawText('everything', 0, 25)
 end
 
 function decreaseData(num)
@@ -37,7 +39,7 @@ function decreaseData(num)
     then
       num = -1
 
-      data[i] = 65535
+      data[i] = value + 65536
       changes[i] = true
     else
       data[i] = value
@@ -74,7 +76,7 @@ function increaseData(num)
     then
       num = 1
 
-      data[i] = 0
+      data[i] = value - 65536
       changes[i] = true
     else
       data[i] = value
@@ -124,6 +126,11 @@ function playdate.upButtonDown()
 end
 
 function playdate.update()
+  if playdate.isCrankDocked()
+  then
+    increaseData(1)
+  end
+
   for i = 1, #data do
     if changes[i] == true
     then
@@ -131,10 +138,6 @@ function playdate.update()
       changes[i] = false
     end
   end
-
-  gfx.setColor(gfx.kColorWhite)
-  gfx.fillRect(0, 20, 50, 30)
-  gfx.setColor(gfx.kColorBlack)
 end
 
 function toBits(num)
