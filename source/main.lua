@@ -107,11 +107,19 @@ function playdate.cranked(change, acceleratedChange)
   modifyData(math.floor(acceleratedChange))
 end
 
+function playdate.deviceWillSleep()
+  saveData()
+end
+
 function playdate.downButtonDown()
   for i = 1, #data do
     data[i] = 0
     changes[i] = true
   end
+end
+
+function playdate.gameWillTerminate()
+  saveData()
 end
 
 function playdate.leftButtonDown()
@@ -144,6 +152,39 @@ function playdate.update()
   end
 end
 
+function readData()
+  data = playdate.datastore.read()
+
+  if data == nil
+  then
+    data = {
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0
+    }
+  end
+
+  changes = {
+    true, true, true, true, true, true, true, true, true, true,
+    true, true, true, true, true, true, true, true, true, true,
+    true, true, true, true, true, true, true, true, true, true,
+    true, true, true, true, true, true, true, true, true, true,
+    true, true, true, true, true, true, true, true, true, true,
+    true, true, true, true, true, true, true, true, true, true,
+    true, true, true, true, true, true, true, true, true, true,
+    true, true, true, true, true
+  }
+end
+
+function saveData()
+  playdate.datastore.write(data)
+end
+
 function toBits(num)
   local bits = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
   local i = 0
@@ -158,6 +199,7 @@ function toBits(num)
   return bits
 end
 
+readData()
 playdate.display.setRefreshRate(0)
 playdate.display.setScale(8)
 clearScreen()
