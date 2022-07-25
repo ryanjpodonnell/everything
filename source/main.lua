@@ -56,7 +56,6 @@ end
 function increaseData(num)
   for i = 1, #data do
     local value = data[i] + num
-    print(value)
 
     if value > 65535
     then
