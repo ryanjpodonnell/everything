@@ -1,34 +1,17 @@
-local data = {
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0
-}
-local changes = {
-  false, false, false, false, false, false, false, false, false, false,
-  false, false, false, false, false, false, false, false, false, false,
-  false, false, false, false, false, false, false, false, false, false,
-  false, false, false, false, false, false, false, false, false, false,
-  false, false, false, false, false, false, false, false, false, false,
-  false, false, false, false, false, false, false, false, false, false,
-  false, false, false, false, false, false, false, false, false, false,
-  false, false, false, false, false
-}
-local font = playdate.graphics.font.new('images/Nano Sans 2X')
-local gfx = playdate.graphics
+local changes = {}
+local data    = {}
+local font    = playdate.graphics.font.new('images/Nano Sans 2X')
+local gfx     = playdate.graphics
 
 function clearScreen()
   gfx.setColor(gfx.kColorWhite)
-  gfx.fillRect(0, 0, 50, 24)
+  gfx.fillRect(0, 0, 400, 240)
   gfx.setColor(gfx.kColorBlack)
 
-  playdate.graphics.drawLine(0, 24, 50, 24)
+  playdate.graphics.drawLine(0, 194, 400, 194)
+  playdate.graphics.drawLine(0, 196, 400, 196)
   playdate.graphics.setFont(font)
-  playdate.graphics.drawText('everything', 0, 25)
+  playdate.graphics.drawText('everything', 0, 198)
 end
 
 function decreaseData(num)
@@ -56,21 +39,24 @@ function drawBitString(data, iterator)
   for i = 1, #bitString do
     local x = (startingPixel + i - 1) % 50
     local y = math.floor((startingPixel + i - 1) / 50)
+    local scaledX = x * 8
+    local scaledY = y * 8
 
     if bitString[i] == 1
     then
       gfx.setColor(gfx.kColorBlack)
-      gfx.drawPixel(x, y)
     else
       gfx.setColor(gfx.kColorWhite)
-      gfx.drawPixel(x, y)
     end
+
+    gfx.fillRect(scaledX, scaledY, 8, 8)
   end
 end
 
 function increaseData(num)
   for i = 1, #data do
     local value = data[i] + num
+    print(value)
 
     if value > 65535
     then
@@ -120,14 +106,6 @@ end
 
 function playdate.gameWillTerminate()
   saveData()
-end
-
-function playdate.leftButtonDown()
-  modifyData(-65535)
-end
-
-function playdate.rightButtonDown()
-  modifyData(65535)
 end
 
 function playdate.upButtonDown()
@@ -199,7 +177,5 @@ function toBits(num)
   return bits
 end
 
-readData()
-playdate.display.setRefreshRate(0)
-playdate.display.setScale(8)
 clearScreen()
+readData()
